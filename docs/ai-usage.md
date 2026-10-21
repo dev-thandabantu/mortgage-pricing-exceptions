@@ -1,3 +1,3 @@
 # AI assistance
 
-Codex reviewed the brief and drafted the implementation plan, then scaffolded the .NET solution and GitHub work items. The plan was approved before implementation. Checks so far: SDK availability and GitHub access. Behavioural verification is recorded with the implementation; none is claimed yet.
+Codex helped review the brief, implement the API/tests and prepare examples. Brighton approved scope and design. Verification used the real HTTP pipeline and file-backed SQLite; 21 tests pass, including retries after restart, competing writes and rollback after an injected history-write failure. The first test run exposed an unstable decision id in response deserialization; separate response DTOs fixed it. No AI participates in pricing decisions.
