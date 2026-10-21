@@ -21,4 +21,9 @@
 
 The fresh-chat review supplied by Brighton reported no material findings and 23/23 tests. The implementation-session review reproduced two UI issues in `350c12d`: failed saves erased drafts/comments, and delayed reads could restore an older selection. Four controlled Chromium checks failed before the fixes and pass afterward. The full browser workflow also passes. The API/domain code was unchanged.
 
-Reproduce with `node scripts/browser-review.cjs`, using the same Puppeteer/Chromium environment as the smoke check. It defaults to port 5030 and an isolated database with app-1001/app-1002 available. It injects temporary save failures and delays read responses; synthetic pending fixtures remain in that database. Final fresh-chat review and acceptance are still pending.
+Reproduce with `node scripts/browser-review.cjs`, using the same Puppeteer/Chromium environment as the smoke check. It defaults to port 5030 and an isolated database with app-1001/app-1002 available. It injects temporary save failures and delays read responses; synthetic pending fixtures remain in that database. Final fresh-chat review passed at `e461347` (23 tests, full browser workflow and all four UI regression checks). PR #8 was accepted and merged as `5a8ba5d`; its merge tree matches the reviewed source. The optional automation follow-up has its own PR and acceptance gate.
+
+
+## Automation follow-up
+
+The optional [live review runner](review-agent.md) detected all three authored faults and returned no findings on the comment-only control. The independently rerun regression harness confirmed the expected baseline/fault/control behavior. Twelve offline Python checks cover output scope, malformed responses, timeout handling and outcome classification; these run in CI without model credentials. The core service source was unchanged by this follow-up.

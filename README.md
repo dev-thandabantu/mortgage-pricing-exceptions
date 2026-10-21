@@ -61,4 +61,8 @@ The decision rationale and production priorities are in [docs/decisions.md](docs
 
 Integration tests use isolated, **file-backed SQLite** databases with the actual HTTP pipeline. They cover approval/decline provenance, restart-safe retries, concurrent duplicates and decisions, amendment/decision races, four-eyes with a dual-role user, ownership, database uniqueness and rollback after an injected history-write failure. Focused domain tests cover stale amendments and rate boundaries. These demonstrate exercise behaviour, not a production load benchmark.
 
-[Interview scenario and next steps](docs/walkthrough.md) ? [AI assistance](docs/ai-usage.md) ? [Time spent](docs/time-spent.md) ? [Work items](docs/work-items.md)
+[Interview scenario and next steps](docs/walkthrough.md) | [AI assistance](docs/ai-usage.md) | [Time spent](docs/time-spent.md) | [Work items](docs/work-items.md)
+
+## Optional review automation
+
+The service itself needs no model account. A separate [bounded review runner](docs/review-agent.md) uses an existing Codex CLI login to review C#/JavaScript diffs or evaluate four controlled changes. It cannot edit the application, run proposed commands, post reviews or merge. Its offline checks run in CI; live model evaluation is opt-in and sends the supplied service source to OpenAI.
