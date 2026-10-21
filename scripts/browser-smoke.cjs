@@ -25,6 +25,7 @@ const base = process.env.BASE_URL || 'http://127.0.0.1:5027';
     assert.equal(await page.$$eval('#history li', elements => elements.length), 2);
     await page.select('#identity', 'reviewer-jules');
     await page.waitForFunction(() => !document.querySelector('#decision-form').hidden);
+    await page.waitForNetworkIdle({ idleTime: 100 });
     // An RM changes terms while this browser still displays revision 2.
     const requestId = await page.$eval('.request-row', element => element.dataset.id);
     const amended = await page.evaluate(async id => {

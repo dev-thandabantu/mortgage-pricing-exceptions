@@ -3,7 +3,11 @@
 - Build: no warnings/errors. `dotnet test`: 23 passing tests, using file-backed SQLite for HTTP/persistence scenarios.
 - Browser: Chromium exercised create, amendment, a conflicting stale approval, refresh, approval, history and downstream discount; checked text escaping and a 390px layout without horizontal overflow.
 - Review demonstration: three regression checks pass unchanged; each fails on its corresponding faulty patch; a comment-only control passes. See `review-demo/results.json`.
-- Clean checkout, source zip and final CI verification are recorded below when completed.
+- Fresh Git checkout: restore, Release build and all 23 tests passed.
+- Extracted source zip: all 23 tests passed; the documented PowerShell HTTP scenario passed against its Release build.
+- Final browser pass against the extracted zip: creation, amendment, stale-approval conflict, refresh, approval, history and downstream read passed; desktop/mobile screenshots were inspected.
+- Production startup explicitly rejected demo authentication.
+- GitHub Actions on Ubuntu passed for application commit `5b6851d`. Subsequent packaging changes update documentation and the optional check scripts; [CI history](https://github.com/dev-thandabantu/mortgage-pricing-exceptions/actions) records each pushed revision.
 
 ## Optional browser check
 

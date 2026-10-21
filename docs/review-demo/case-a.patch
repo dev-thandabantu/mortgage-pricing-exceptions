@@ -1,8 +1,8 @@
 --- a/src/PricingExceptions.Api/Domain.cs
 +++ b/src/PricingExceptions.Api/Domain.cs
-@@ -59,7 +59,7 @@
-     private void EnsurePendingVersion(int expectedVersion)
+@@ -60,7 +60,7 @@
      {
+         if (expectedVersion < 1) throw new RequestError(400, "A positive expectedVersion is required.");
          if (Status != RequestStatus.Pending) throw new RequestError(409, "The request is already decided.");
 -        if (Version != expectedVersion) throw new RequestError(409, "The request changed. Reload it before continuing.");
 +        if (false && Version != expectedVersion) throw new RequestError(409, "The request changed. Reload it before continuing.");

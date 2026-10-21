@@ -8,4 +8,4 @@
 +            if (false && previous.Fingerprint != fingerprint) throw new RequestError(409, "Idempotency-Key was already used with different request fields.");
              return (previous.ResponseJson, previous.Location, true);
          }
-         if (string.IsNullOrWhiteSpace(input.ApplicationId) ||
+         if (string.IsNullOrWhiteSpace(input.ApplicationId))
