@@ -17,3 +17,17 @@ The service will use explicit expectedVersion values and 409 for conflicting mut
 ## Before production
 
 Replace demo authentication with verified OIDC/workload identities and establish record-level permissions. Resolve authority tiers, approval replacement/expiry, and application-version invalidation with the client. Introduce managed schema migrations, backup/recovery, audit retention and operational monitoring. Choose database/deployment against availability and concurrency requirements; a move to PostgreSQL changes locking and needs new integration tests. Add an outbox only if reliable event delivery becomes a requirement.
+
+## State diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> Pending: submit revision 1
+    Pending --> Pending: submitting RM amends; preserve revision
+    Pending --> Approved: second reviewer approves current version
+    Pending --> Declined: second reviewer declines current version
+    Approved --> [*]
+    Declined --> [*]
+```
+
+A new submission after decline is a new request, not a transition of the old request.

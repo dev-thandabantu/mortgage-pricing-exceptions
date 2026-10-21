@@ -219,7 +219,7 @@ public sealed class WorkflowTests : IDisposable
             var db = scope.ServiceProvider.GetRequiredService<PricingDb>();
             await db.Database.ExecuteSqlRawAsync("CREATE TRIGGER RejectDecision BEFORE INSERT ON Decisions BEGIN SELECT RAISE(ABORT, 'injected history failure'); END;");
         }
-        Assert.Equal(HttpStatusCode.Conflict, (await Decide(reviewer, request)).StatusCode);
+        Assert.Equal(HttpStatusCode.InternalServerError, (await Decide(reviewer, request)).StatusCode);
         var current = await View(await rm.GetAsync($"/pricing-exceptions/{request.Id}"));
         Assert.Equal(RequestStatus.Pending, current.Status);
         Assert.Equal(1, current.Version);
@@ -288,6 +288,7 @@ public sealed class WorkflowTests : IDisposable
         Assert.Equal(HttpStatusCode.BadRequest, (await rm.PostAsJsonAsync("/pricing-exceptions", new { applicationId = "app-1001", discountBps = 25, reason = "Reason" })).StatusCode);
         var request = await View(await Create(rm));
         Assert.Equal(HttpStatusCode.BadRequest, (await Decide(reviewer, request, "Pending")).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await reviewer.PostAsJsonAsync($"/pricing-exceptions/{request.Id}/decisions", new { outcome = "Approved" })).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await reviewer.GetAsync("/applications/missing/approved-discount")).StatusCode);
         var problem = await (await reviewer.GetAsync("/applications/app-1001/approved-discount")).Content.ReadFromJsonAsync<JsonElement>();
         Assert.Contains("No approved", problem.GetProperty("detail").GetString());
@@ -304,4 +305,41 @@ public sealed class WorkflowTests : IDisposable
         var error = await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync());
         Assert.Equal(19, Assert.IsType<SqliteException>(error.InnerException).SqliteErrorCode);
     }
+    [Fact]
+    public async Task Creation_history_failure_leaves_neither_request_nor_replay_record()
+    {
+        using var rm = api.As();
+        using (var scope = api.Services.CreateScope())
+            await scope.ServiceProvider.GetRequiredService<PricingDb>().Database.ExecuteSqlRawAsync("CREATE TRIGGER RejectRevision BEFORE INSERT ON Revisions BEGIN SELECT RAISE(ABORT, 'injected creation failure'); END;");
+        Assert.Equal(HttpStatusCode.InternalServerError, (await Create(rm)).StatusCode);
+        using (var scope = api.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<PricingDb>();
+            Assert.Equal(0, await db.Requests.CountAsync());
+            Assert.Equal(0, await db.Revisions.CountAsync());
+            Assert.Equal(0, await db.Idempotency.CountAsync());
+            await db.Database.ExecuteSqlRawAsync("DROP TRIGGER RejectRevision;");
+        }
+        Assert.Equal(HttpStatusCode.Created, (await Create(rm)).StatusCode);
+    }
+
+    [Fact]
+    public async Task Concurrency_token_rejects_a_stale_context_update()
+    {
+        using var rm = api.As();
+        var request = await View(await Create(rm));
+        using var firstScope = api.Services.CreateScope();
+        using var secondScope = api.Services.CreateScope();
+        var first = firstScope.ServiceProvider.GetRequiredService<PricingDb>();
+        var second = secondScope.ServiceProvider.GetRequiredService<PricingDb>();
+        var fresh = await first.Requests.Include(x => x.Revisions).SingleAsync(x => x.Id == request.Id);
+        var stale = await second.Requests.SingleAsync(x => x.Id == request.Id);
+        fresh.Amend(35, "Fresh terms", 1, "rm-alex", DateTimeOffset.UtcNow, 100);
+        await first.SaveChangesAsync();
+        // Exercise the mapping independently of the HTTP transaction's serialisation.
+        second.Entry(stale).Property(x => x.Reason).CurrentValue = "Stale overwrite";
+        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => second.SaveChangesAsync());
+        Assert.Equal("Fresh terms", (await View(await rm.GetAsync($"/pricing-exceptions/{request.Id}"))).Reason);
+    }
+
 }

@@ -11,7 +11,7 @@ dotnet restore
 dotnet run --project src/PricingExceptions.Api
 ```
 
-The API runs at **http://localhost:5019**. Seed applications and demo users: `/demo`. OpenAPI: `/openapi/v1.json`. Requests: [examples/workflow.http](examples/workflow.http).
+Open **http://localhost:5019** for the internal workflow UI. Switch between the seeded RM and reviewer identities to exercise the approval boundary. Seed applications and demo users: `/demo`. OpenAPI: `/openapi/v1.json`. Requests: [examples/workflow.http](examples/workflow.http).
 
 ```sh
 dotnet test
@@ -44,7 +44,7 @@ All workflow endpoints require `X-User-Id`. This is a **local exercise identity 
 | Decide | `POST /pricing-exceptions/{id}/decisions` | Reviewer other than requester; `expectedVersion` required |
 | Read approved discount | `GET /applications/{id}/approved-discount` | Mortgage process or internal RM/reviewer |
 
-Errors use Problem Details: 400 for invalid input, 401 for missing/unknown identity, 403 for forbidden actions, 404 for absent resources/approval, 409 for state/version/key conflicts. Database lock timeout returns 503 with `Retry-After: 1`. Successful creation/replay returns 201 and the original `Location`/body; `Idempotency-Replayed` identifies a replay.
+Errors use Problem Details: 400 for invalid input, 401 for missing/unknown identity, 403 for forbidden actions, 404 for absent resources/approval, 409 for state/version/key conflicts. Unexpected persistence failures return 500 without committing partial changes. Database lock timeout returns 503 with `Retry-After: 1`. Successful creation/replay returns 201 and the original `Location`/body; `Idempotency-Replayed` identifies a replay.
 
 ## Deliberate decisions
 

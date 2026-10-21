@@ -13,7 +13,7 @@ public sealed class Workflow(PricingDb db, TimeProvider clock, IConfiguration co
         string actor, string key, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(key) || key.Length > 128 || key.Any(char.IsControl))
-            throw new RequestError(400, "A single Idempotency-Key of 1?128 non-control characters is required.");
+            throw new RequestError(400, "A single Idempotency-Key of 1-128 non-control characters is required.");
         var fingerprint = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(input, ApiJson.Options))));
         // Acquire SQLite's write reservation BEFORE reading; separate processes share this lock.
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
@@ -23,8 +23,9 @@ public sealed class Workflow(PricingDb db, TimeProvider clock, IConfiguration co
             if (previous.Fingerprint != fingerprint) throw new RequestError(409, "Idempotency-Key was already used with different request fields.");
             return (previous.ResponseJson, previous.Location, true);
         }
-        if (string.IsNullOrWhiteSpace(input.ApplicationId) ||
-            !await db.Applications.AnyAsync(x => x.Id == input.ApplicationId, cancellationToken))
+        if (string.IsNullOrWhiteSpace(input.ApplicationId))
+            throw new RequestError(400, "ApplicationId is required.");
+        if (!await db.Applications.AnyAsync(x => x.Id == input.ApplicationId, cancellationToken))
             throw new RequestError(404, "Mortgage application not found.");
         if (await db.Requests.AnyAsync(x => x.ApplicationId == input.ApplicationId &&
             (x.Status == RequestStatus.Pending || x.Status == RequestStatus.Approved), cancellationToken))

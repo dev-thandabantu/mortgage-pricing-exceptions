@@ -1,0 +1,11 @@
+--- a/src/PricingExceptions.Api/Workflow.cs
++++ b/src/PricingExceptions.Api/Workflow.cs
+@@ -20,7 +20,7 @@
+         var previous = await db.Idempotency.FindAsync([actor, "CreatePricingException", key], cancellationToken);
+         if (previous is not null)
+         {
+-            if (previous.Fingerprint != fingerprint) throw new RequestError(409, "Idempotency-Key was already used with different request fields.");
++            if (false && previous.Fingerprint != fingerprint) throw new RequestError(409, "Idempotency-Key was already used with different request fields.");
+             return (previous.ResponseJson, previous.Location, true);
+         }
+         if (string.IsNullOrWhiteSpace(input.ApplicationId) ||

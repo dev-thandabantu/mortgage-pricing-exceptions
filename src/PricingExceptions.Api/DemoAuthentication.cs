@@ -10,11 +10,11 @@ public static class DemoUsers
 {
     public static readonly DemoUser[] All =
     [
-        new("rm-alex", "Alex ? relationship manager", ["RelationshipManager"]),
-        new("rm-sam", "Sam ? relationship manager", ["RelationshipManager"]),
-        new("reviewer-jules", "Jules ? reviewer", ["Reviewer"]),
-        new("reviewer-robin", "Robin ? reviewer", ["Reviewer"]),
-        new("rm-reviewer", "Taylor ? RM and reviewer", ["RelationshipManager", "Reviewer"]),
+        new("rm-alex", "Alex - relationship manager", ["RelationshipManager"]),
+        new("rm-sam", "Sam - relationship manager", ["RelationshipManager"]),
+        new("reviewer-jules", "Jules - reviewer", ["Reviewer"]),
+        new("reviewer-robin", "Robin - reviewer", ["Reviewer"]),
+        new("rm-reviewer", "Taylor - RM and reviewer", ["RelationshipManager", "Reviewer"]),
         new("mortgage-process", "Mortgage application process", ["MortgageProcess"])
     ];
 }

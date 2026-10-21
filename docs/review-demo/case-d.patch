@@ -1,0 +1,11 @@
+--- a/src/PricingExceptions.Api/Workflow.cs
++++ b/src/PricingExceptions.Api/Workflow.cs
+@@ -15,7 +15,7 @@
+         if (string.IsNullOrWhiteSpace(key) || key.Length > 128 || key.Any(char.IsControl))
+             throw new RequestError(400, "A single Idempotency-Key of 1?128 non-control characters is required.");
+         var fingerprint = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(input, ApiJson.Options))));
+-        // Acquire SQLite's write reservation BEFORE reading; separate processes share this lock.
++        // Reserve the SQLite writer before loading mutable state.
+         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+         var previous = await db.Idempotency.FindAsync([actor, "CreatePricingException", key], cancellationToken);
+         if (previous is not null)

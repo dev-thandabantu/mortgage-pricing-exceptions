@@ -38,7 +38,7 @@ app.Use(async (context, next) =>
     try { await next(context); }
     catch (RequestError error) { await Problem(error.StatusCode, error.Message); }
     catch (DbUpdateConcurrencyException) { await Problem(409, "The request changed. Reload it before continuing."); }
-    catch (DbUpdateException error) when (error.InnerException is SqliteException { SqliteErrorCode: 19 })
+    catch (DbUpdateException error) when (error.InnerException is SqliteException { SqliteExtendedErrorCode: 1555 or 2067 })
     { await Problem(409, "The operation conflicts with an existing request or decision."); }
     catch (Exception error) when (error is SqliteException { SqliteErrorCode: 5 or 6 } ||
         error is DbUpdateException { InnerException: SqliteException { SqliteErrorCode: 5 or 6 } })

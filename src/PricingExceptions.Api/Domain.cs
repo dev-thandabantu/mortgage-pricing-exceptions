@@ -58,6 +58,7 @@ public sealed class PricingRequest
 
     private void EnsurePendingVersion(int expectedVersion)
     {
+        if (expectedVersion < 1) throw new RequestError(400, "A positive expectedVersion is required.");
         if (Status != RequestStatus.Pending) throw new RequestError(409, "The request is already decided.");
         if (Version != expectedVersion) throw new RequestError(409, "The request changed. Reload it before continuing.");
     }

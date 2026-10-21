@@ -33,9 +33,9 @@ public sealed class PricingDb(DbContextOptions<PricingDb> options) : DbContext(o
         model.Entity<MortgageApplication>().HasKey(x => x.Id);
         model.Entity<IdempotencyRecord>().HasKey(x => new { x.Actor, x.Operation, x.Key });
         model.Entity<MortgageApplication>().HasData(
-            new MortgageApplication("app-1001", "Purchase ? fixed-rate mortgage"),
-            new MortgageApplication("app-1002", "Remortgage ? fixed-rate mortgage"),
-            new MortgageApplication("app-1003", "Purchase ? joint application"));
+            new MortgageApplication("app-1001", "Purchase - fixed-rate mortgage"),
+            new MortgageApplication("app-1002", "Remortgage - fixed-rate mortgage"),
+            new MortgageApplication("app-1003", "Purchase - joint application"));
     }
 }
 
