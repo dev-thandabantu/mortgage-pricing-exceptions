@@ -12,7 +12,7 @@
 
 Core acceptance: [#9](https://github.com/dev-thandabantu/mortgage-pricing-exceptions/issues/9), completed after PR #8's final review.
 
-[Milestone 5: automated review demonstration](https://github.com/dev-thandabantu/mortgage-pricing-exceptions/milestone/5) contains #10 (runner), #11 (evaluation) and #12 (documentation). Acceptance remains open until its separate final review and merge.
+[Milestone 5: automated review demonstration](https://github.com/dev-thandabantu/mortgage-pricing-exceptions/milestone/5) contains #10 (runner), #11 (evaluation) and #12 (documentation). Completed after separate independent/final review at `16c0808` and merge in PR #19.
 
 [Future: production readiness](https://github.com/dev-thandabantu/mortgage-pricing-exceptions/milestone/6) is an undated backlog outside the take-home:
 

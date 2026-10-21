@@ -19,11 +19,14 @@
 
 ## PR review follow-up
 
-The fresh-chat review supplied by Brighton reported no material findings and 23/23 tests. The implementation-session review reproduced two UI issues in `350c12d`: failed saves erased drafts/comments, and delayed reads could restore an older selection. Four controlled Chromium checks failed before the fixes and pass afterward. The full browser workflow also passes. The API/domain code was unchanged.
+An independent fresh-session review initially reported no material findings and 23/23 tests. The implementation-session review reproduced two UI issues in `350c12d`: failed saves erased drafts/comments, and delayed reads could restore an older selection. Four controlled Chromium checks failed before the fixes and pass afterward. The full browser workflow also passes. The API/domain code was unchanged.
 
-Reproduce with `node scripts/browser-review.cjs`, using the same Puppeteer/Chromium environment as the smoke check. It defaults to port 5030 and an isolated database with app-1001/app-1002 available. It injects temporary save failures and delays read responses; synthetic pending fixtures remain in that database. Final fresh-chat review passed at `e461347` (23 tests, full browser workflow and all four UI regression checks). PR #8 was accepted and merged as `5a8ba5d`; its merge tree matches the reviewed source. The optional automation follow-up has its own PR and acceptance gate.
+Reproduce with `node scripts/browser-review.cjs`, using the same Puppeteer/Chromium environment as the smoke check. It defaults to port 5030 and an isolated database with app-1001/app-1002 available. It injects temporary save failures and delays read responses; synthetic pending fixtures remain in that database. Final fresh-chat review passed at `e461347` (23 tests, full browser workflow and all four UI regression checks). PR #8 was accepted and merged as `5a8ba5d`; its merge tree matches the reviewed source. The automation follow-up separately passed final fresh-session review at `16c0808` and merged through PR #19 as `c69dd7a`; its merge tree also matches the reviewed source.
 
 
 ## Automation follow-up
 
 The optional [live review runner](review-agent.md) detected all three authored faults and returned no findings on the comment-only control. The independently rerun regression harness confirmed the expected baseline/fault/control behavior. Twelve offline Python checks cover output scope, malformed responses, timeout handling and outcome classification; these run in CI without model credentials. The core service source was unchanged by this follow-up.
+
+
+The final PR #19 review also checked the no-source-change skip and regenerated evaluation-input hashes without rerunning live model calls. The accepted source archive was verified byte-for-byte against `c69dd7a`, then its extracted Release build, 23 .NET tests and 12 offline Python checks passed. Subsequent documentation changes follow a separate PR review; they do not alter those historical code-verification results.
