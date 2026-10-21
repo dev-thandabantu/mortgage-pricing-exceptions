@@ -1,5 +1,6 @@
 """Optional review demonstration; requires Python 3 and .NET 10. Never modifies the application."""
 from pathlib import Path
+import argparse
 import datetime
 import json
 import shutil
@@ -7,6 +8,9 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 root = Path(__file__).resolve().parents[1]
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--output", type=Path, default=root / "docs/review-demo/results.json")
+args = parser.parse_args()
 cases = json.loads((root / "docs/review-demo/cases.json").read_text(encoding="utf-8"))
 stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 work = root / "artifacts" / ("review-check-" + stamp)
@@ -47,5 +51,6 @@ for case in cases:
     finally:
         target.write_text(original, encoding="utf-8")
 report = {"runUtc": stamp, "method": "Worked demonstration; authored mutations, not a blind benchmark", "results": results}
-(root / "docs/review-demo/results.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+args.output.parent.mkdir(parents=True, exist_ok=True)
+args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 print("Verified three proposed checks against baseline, three faults and one harmless control.")

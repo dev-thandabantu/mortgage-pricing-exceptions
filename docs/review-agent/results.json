@@ -1,0 +1,110 @@
+{
+  "runUtc": "20261021T194228Z",
+  "sourceCommit": "5a8ba5dd9ed2e7337b7be9f08d5f992266c81332",
+  "cliVersion": "codex-cli 0.162.1",
+  "mode": "evaluation",
+  "results": [
+    {
+      "status": "reviewed",
+      "inputSha256": "cb3a2f91bd86af022cdbcfd948a3320bd07901b7c86220b2a21e53a59a380ee4",
+      "review": {
+        "summary": "The change disables revision validation, allowing stale decisions and amendments.",
+        "findings": [
+          {
+            "path": "src/PricingExceptions.Api/Domain.cs",
+            "line": 63,
+            "severity": "high",
+            "title": "Restore the expected-version check before mutations",
+            "explanation": "A reviewer can load version 1, then the submitting RM can amend the request to version 2 with a different discount. Submitting approval with expectedVersion 1 now succeeds and approves revision 2, which the reviewer never reviewed. EF's concurrency token does not prevent this because Workflow loads the current version before applying the decision. The same bypass allows stale amendments to overwrite newer terms. Restore the version comparison so stale commands return 409."
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 22638,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 176,
+        "reasoning_output_tokens": 22
+      },
+      "elapsedSeconds": 13.0,
+      "case": "case-a",
+      "expectsFault": true,
+      "outcome": "detected"
+    },
+    {
+      "status": "reviewed",
+      "inputSha256": "9b72a5c7667505a7ca4bffc4a06be8a28590949625d48d066781d5199a3a087f",
+      "review": {
+        "summary": "The change disables the server-side self-approval restriction.",
+        "findings": [
+          {
+            "path": "src/PricingExceptions.Api/Domain.cs",
+            "line": 49,
+            "severity": "high",
+            "title": "Restore the requester identity check before deciding",
+            "explanation": "The constant false makes this guard unreachable. Authenticate as rm-reviewer, create a request, then POST to its /decisions endpoint with outcome Approved and expectedVersion 1 using the same identity. The caller satisfies the Reviewer policy and the request is approved, allowing a submitting RM with both roles to authorize their own discount. Hiding the decision form in the UI does not prevent direct API calls."
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 22638,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 142,
+        "reasoning_output_tokens": 0
+      },
+      "elapsedSeconds": 9.45,
+      "case": "case-b",
+      "expectsFault": true,
+      "outcome": "detected"
+    },
+    {
+      "status": "reviewed",
+      "inputSha256": "b876b8c83c5e236d82a75f0d8f43677b04a9ab93ddc8b7bfff715a68787eca35",
+      "review": {
+        "summary": "The change disables validation of idempotency replay fields.",
+        "findings": [
+          {
+            "path": "src/PricingExceptions.Api/Workflow.cs",
+            "line": 23,
+            "severity": "medium",
+            "title": "Restore fingerprint validation before replaying a success",
+            "explanation": "Create a request as rm-alex with key K for app-1001 and 25 bps, then submit another create as rm-alex with key K for app-1002 and 50 bps. The constant false disables the mismatch check, so the second call returns 201 with the original app-1001 response instead of 409, without creating the requested app-1002 exception. This silently reports success for different submitted fields and violates the required idempotency semantics. Restore the fingerprint comparison."
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 22637,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 191,
+        "reasoning_output_tokens": 22
+      },
+      "elapsedSeconds": 14.42,
+      "case": "case-c",
+      "expectsFault": true,
+      "outcome": "detected"
+    },
+    {
+      "status": "reviewed",
+      "inputSha256": "a8189269f9eafcfb4e6140e402ae09b3c7945f5c032d572c98b6aa735f4a1380",
+      "review": {
+        "summary": "The diff only changes a comment and introduces no correctness or security regressions.",
+        "findings": []
+      },
+      "usage": {
+        "input_tokens": 22663,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 32,
+        "reasoning_output_tokens": 0
+      },
+      "elapsedSeconds": 8.12,
+      "case": "case-d",
+      "expectsFault": false,
+      "outcome": "quiet-control"
+    }
+  ],
+  "interpretation": "Three correctly located findings; one quiet control. Explanations checked against the corresponding regression failures. Four authored, obvious mutations are not a general accuracy benchmark.",
+  "modelSelection": "CLI default with user configuration ignored; exact model identity was not exposed in the captured JSON events."
+}

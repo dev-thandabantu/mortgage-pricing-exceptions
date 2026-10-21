@@ -9,3 +9,6 @@ Recorded on 21 October 2026 (SAST):
 These are observed session elapsed times, including agent/tool runs and waiting, not a claim about equivalent human engineering hours. Brighton's separate preparation and hands-on review time are not measured here. Final repository bookkeeping/CI completion follows this record.
 
 Subsequent PR review and UI fixes occurred after the recorded session. Their elapsed time was not measured separately and is excluded from the total above.
+
+
+A further measured window on 21 October was 18:10:33-18:34:18 SAST (23 minutes 45 seconds), covering optional automation, checks, documentation and private preparation. Later continuation and interruptions were not measured as active effort. This is an additional observed window, not a complete total for all assignment/review/preparation work.
