@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pricing desk &middot; Mortgage exceptions</title><link rel="stylesheet" href="/styles.css"><script src="/app.js" defer></script></head>
+<body>
+<header><div class="brand"><span class="mark" aria-hidden="true">P</span><div><span class="eyebrow">MORTGAGE OPERATIONS</span><h1>Pricing desk</h1></div></div><div class="identity"><span class="demo-label">Local demo</span><label for="identity">Working as</label><select id="identity" aria-label="Working as"></select></div></header>
+<main>
+<div class="intro"><div><p class="eyebrow">PRICING EXCEPTIONS</p><h2>A clear path from proposal to decision.</h2><p>Request a rate discount, review the terms, and keep the full decision history.</p></div><button id="refresh" class="secondary">Refresh requests</button></div>
+<div id="message" role="status" aria-live="polite" hidden></div>
+<section class="stats" aria-label="Request overview"><div><span>Awaiting review</span><strong id="pending-count">0</strong></div><div><span>Approved</span><strong id="approved-count">0</strong></div><div><span>Declined</span><strong id="declined-count">0</strong></div></section>
+<div class="workspace">
+<div class="left-column">
+<section class="panel"><div class="panel-heading"><div><p class="eyebrow">01 / PROPOSE</p><h3>New exception</h3></div></div><p class="muted" id="create-hint">Choose an application and explain the proposed discount.</p>
+<form id="create-form"><label for="application">Mortgage application</label><select id="application" required></select><label for="discount">Requested discount <span class="muted">(basis points)</span></label><input id="discount" type="number" min="1" value="25" required><p class="field-help">25 bps = 0.25 percentage points off the standard rate.</p><label for="reason">Reason for the exception</label><textarea id="reason" maxlength="2000" rows="3" placeholder="Explain the customer or commercial context" required></textarea><button type="submit" id="create-button">Submit for review <span aria-hidden="true">&#8594;</span></button></form></section>
+<section class="panel queue"><div class="panel-heading"><div><p class="eyebrow">02 / TRACK</p><h3>Requests</h3></div><span class="muted" id="queue-count">Latest 100</span></div><div id="request-list"><p class="empty">No requests yet. Submit an exception to begin.</p></div></section>
+</div>
+<section class="panel detail" aria-labelledby="detail-title"><div class="panel-heading"><div><p class="eyebrow">03 / REVIEW</p><h3 id="detail-title">Request detail</h3></div><span id="status" class="badge" hidden></span></div>
+<div id="empty-detail" class="empty detail-empty"><span class="empty-icon" aria-hidden="true">&#8594;</span><h4>Every decision starts with the details.</h4><p>Select a request to review its terms and history.</p></div>
+<div id="detail" hidden><div class="terms"><div><span class="muted">Requested discount</span><strong id="detail-discount"></strong><span id="detail-revision" class="muted"></span></div><div><span class="muted">Application</span><strong id="detail-application" class="application-name"></strong><span id="detail-author" class="muted"></span></div></div><h4>Reason</h4><p id="detail-reason" class="reason"></p>
+<form id="amend-form" class="action-block" hidden><h4>Update pending terms</h4><div class="inline"><div><label for="amend-discount">Discount (bps)</label><input id="amend-discount" type="number" min="1" required></div><div><label for="amend-reason">Reason</label><input id="amend-reason" maxlength="2000" required></div></div><button type="submit" class="secondary">Save new revision</button></form>
+<form id="decision-form" class="action-block" hidden><h4>Review this revision</h4><label for="comment">Decision comment <span class="muted">(optional)</span></label><textarea id="comment" rows="2" maxlength="2000" placeholder="Record the basis for your decision"></textarea><div class="buttons"><button type="submit" value="Approved">Approve discount</button><button type="submit" value="Declined" class="decline">Decline request</button></div></form>
+<p id="decision-hint" class="field-help"></p><div id="approved-terms" class="approved-terms" hidden></div><div class="history-heading"><h4>Request history</h4><span class="muted">Preserved with each change</span></div><ol id="history" class="history"></ol></div>
+</section></div>
+<footer>Approval always applies to the exact revision reviewed. <a href="/openapi/v1.json">API specification</a></footer>
+</main></body></html>

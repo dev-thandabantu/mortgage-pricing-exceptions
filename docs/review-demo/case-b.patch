@@ -1,0 +1,11 @@
+--- a/src/PricingExceptions.Api/Domain.cs
++++ b/src/PricingExceptions.Api/Domain.cs
+@@ -46,7 +46,7 @@
+     public void Decide(RequestStatus outcome, int expectedVersion, string actor,
+         DateTimeOffset now, string? comment)
+     {
+-        if (actor == CreatedBy) throw new RequestError(403, "A requester cannot decide their own request.");
++        if (false && actor == CreatedBy) throw new RequestError(403, "A requester cannot decide their own request.");
+         EnsurePendingVersion(expectedVersion);
+         if (outcome is not (RequestStatus.Approved or RequestStatus.Declined))
+             throw new RequestError(400, "Outcome must be Approved or Declined.");

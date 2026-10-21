@@ -1,0 +1,34 @@
+[
+  {
+    "case": "case-a",
+    "file": "src/PricingExceptions.Api/Domain.cs",
+    "old": "if (Version != expectedVersion)",
+    "new": "if (false && Version != expectedVersion)",
+    "test": "Amendment_preserves_revisions_and_stale_decision_cannot_approve_new_terms",
+    "expected": "Failed"
+  },
+  {
+    "case": "case-b",
+    "file": "src/PricingExceptions.Api/Domain.cs",
+    "old": "if (actor == CreatedBy)",
+    "new": "if (false && actor == CreatedBy)",
+    "test": "Authorisation_ownership_and_four_eyes_are_separate_boundaries",
+    "expected": "Failed"
+  },
+  {
+    "case": "case-c",
+    "file": "src/PricingExceptions.Api/Workflow.cs",
+    "old": "previous.Fingerprint != fingerprint",
+    "new": "false && previous.Fingerprint != fingerprint",
+    "test": "Key_conflicts_are_rejected_and_keys_are_scoped_to_actor",
+    "expected": "Failed"
+  },
+  {
+    "case": "case-d",
+    "file": "src/PricingExceptions.Api/Workflow.cs",
+    "old": "// Acquire SQLite's write reservation BEFORE reading; separate processes share this lock.",
+    "new": "// Reserve the SQLite writer before loading mutable state.",
+    "test": "Key_conflicts_are_rejected_and_keys_are_scoped_to_actor",
+    "expected": "Passed"
+  }
+]

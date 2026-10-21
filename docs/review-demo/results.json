@@ -1,0 +1,48 @@
+{
+  "runUtc": "20261021T131649Z",
+  "method": "Worked demonstration; authored mutations, not a blind benchmark",
+  "results": [
+    {
+      "case": "baseline-case-a",
+      "test": "Amendment_preserves_revisions_and_stale_decision_cannot_approve_new_terms",
+      "outcome": "Passed",
+      "testsRun": 1
+    },
+    {
+      "case": "baseline-case-b",
+      "test": "Authorisation_ownership_and_four_eyes_are_separate_boundaries",
+      "outcome": "Passed",
+      "testsRun": 1
+    },
+    {
+      "case": "baseline-case-c",
+      "test": "Key_conflicts_are_rejected_and_keys_are_scoped_to_actor",
+      "outcome": "Passed",
+      "testsRun": 1
+    },
+    {
+      "case": "case-a",
+      "test": "Amendment_preserves_revisions_and_stale_decision_cannot_approve_new_terms",
+      "outcome": "Failed",
+      "testsRun": 1
+    },
+    {
+      "case": "case-b",
+      "test": "Authorisation_ownership_and_four_eyes_are_separate_boundaries",
+      "outcome": "Failed",
+      "testsRun": 1
+    },
+    {
+      "case": "case-c",
+      "test": "Key_conflicts_are_rejected_and_keys_are_scoped_to_actor",
+      "outcome": "Failed",
+      "testsRun": 1
+    },
+    {
+      "case": "case-d",
+      "test": "Key_conflicts_are_rejected_and_keys_are_scoped_to_actor",
+      "outcome": "Passed",
+      "testsRun": 1
+    }
+  ]
+}

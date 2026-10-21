@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:5019
+@applicationId = app-1001
+
+### Synthetic identities and seeded applications
+GET {{baseUrl}}/demo
+
+### Create (fresh database; use the same key/body to retry)
+# @name create
+POST {{baseUrl}}/pricing-exceptions
+X-User-Id: rm-alex
+Idempotency-Key: walkthrough-1
+Content-Type: application/json
+
+{"applicationId":"{{applicationId}}","discountBps":25,"reason":"Customer retention"}
+
+### Capture the created id (VS Code REST Client)
+@requestId = {{create.response.body.$.id}}
+
+### Amend while pending
+PATCH {{baseUrl}}/pricing-exceptions/{{requestId}}
+X-User-Id: rm-alex
+Content-Type: application/json
+
+{"discountBps":40,"reason":"Corrected retention offer","expectedVersion":1}
+
+### Stale approval: expect 409
+POST {{baseUrl}}/pricing-exceptions/{{requestId}}/decisions
+X-User-Id: reviewer-jules
+Content-Type: application/json
+
+{"outcome":"Approved","expectedVersion":1,"comment":"Old view"}
+
+### Approve current revision
+POST {{baseUrl}}/pricing-exceptions/{{requestId}}/decisions
+X-User-Id: reviewer-jules
+Content-Type: application/json
+
+{"outcome":"Approved","expectedVersion":2,"comment":"Reviewed revised terms"}
+
+### Downstream approved terms and provenance
+GET {{baseUrl}}/applications/{{applicationId}}/approved-discount
+X-User-Id: mortgage-process
+
+### Current status, every revision and terminal decision
+GET {{baseUrl}}/pricing-exceptions/{{requestId}}
+X-User-Id: rm-alex

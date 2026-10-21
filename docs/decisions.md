@@ -13,3 +13,21 @@ Applications are seeded read-only records. Users are seeded identities selected 
 SQLite keeps local setup simple. State transitions, revisions and decisions share one transaction. Creation idempotency also commits in that transaction; caller and operation scope its key. Same key/different parsed fields returns 409. Stored successful responses are replayed, not reconstructed from current request state.
 
 The service will use explicit expectedVersion values and 409 for conflicting mutations. SQLite write transactions are short and serialised; application-managed concurrency tokens additionally protect updates. This is an exercise-scale concurrency trade-off.
+
+## Before production
+
+Replace demo authentication with verified OIDC/workload identities and establish record-level permissions. Resolve authority tiers, approval replacement/expiry, and application-version invalidation with the client. Introduce managed schema migrations, backup/recovery, audit retention and operational monitoring. Choose database/deployment against availability and concurrency requirements; a move to PostgreSQL changes locking and needs new integration tests. Add an outbox only if reliable event delivery becomes a requirement.
+
+## State diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> Pending: submit revision 1
+    Pending --> Pending: submitting RM amends; preserve revision
+    Pending --> Approved: second reviewer approves current version
+    Pending --> Declined: second reviewer declines current version
+    Approved --> [*]
+    Declined --> [*]
+```
+
+A new submission after decline is a new request, not a transition of the old request.
